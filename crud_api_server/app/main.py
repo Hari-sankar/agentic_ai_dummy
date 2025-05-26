@@ -24,11 +24,16 @@ def read_root():
     return {"message": "Hello from root"}
 
 # Create your FastMCP server as well as any tools, resources, etc.
+from starlette.routing import Mount
+
+# Create your FastMCP server as well as any tools, resources, etc.
 mcp = FastMCP("MyServer")
 
 # Create the ASGI app
 mcp_app = mcp.http_app(path='/mcp')
-app.mount("/mcp", mcp_app)
 
+# Create a FastAPI app and mount the MCP server
+app = FastAPI(lifespan=mcp_app.lifespan)
+app.mount("/mcp-server", mcp_app)
 
 print(app.routes)
